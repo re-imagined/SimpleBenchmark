@@ -87,12 +87,6 @@ def progress_bar(p):
         p.show_progress()
 
 
-def handler(signum, frame):
-    global is_exit
-    is_exit = True
-    print "receive a signal %d, is_exit = %d" % (signum, is_exit)
-
-
 def test_start():
     threads = []
     global REQUEST_NUM
