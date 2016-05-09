@@ -4,7 +4,7 @@ which supports multiple threads and simulate the HTTP requests and responses of 
 You can take it as a simplified version of the AB(Apache Benchmark)
 
 ## Basic Usage
-> $ python ./test.py -n 100 -c 10 http://stackoverflow.com/
+> $ python ./test.py -n 100 -c 10 -m POST http://stackoverflow.com/
 
 ```
 Test starts at: Mon May 09 13:14:34 2016
