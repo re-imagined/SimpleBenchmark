@@ -26,9 +26,7 @@ FAIL_NUM = 0  # 出错数
 SUCCESS_NUM = 0  # 成功请求数
 FILE_SIZE = 0
 MY_MEHTOD = 'GET'  # 默认使用 GET 方法
-# 下面的 DATA 和 HEADERS 仅为例子，不是默认值
-MY_DATA = {'email': 'myemail', 'password': 'mypass', 'autologin': '1',
-           'submit': 'submit', 'type': ''}
+
 MY_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit\
             /537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
@@ -65,8 +63,7 @@ def request_URL(url):
     for _ in xrange(CONCURRENCY_NUM):
         try:
             req = urllib2.Request(url, headers=MY_HEADERS)
-            response = urllib2.urlopen(req, timeout=TIME_OUT,
-                                       data=urllib.urlencode(MY_DATA))
+            response = urllib2.urlopen(req, timeout=TIME_OUT)
             html = response.read()
             SUCCESS_NUM += 1
             FILE_SIZE += len(html)
@@ -142,7 +139,6 @@ def get_server_info(method='GET'):
         print(
             'Server Software: %s' %
             res.headers.get('server'))
-        # print(res.headers)
         if str(res.history) == '[]':
             res.history = ''
         print('Status Code: %s %s' % (res.status_code, res.history))
@@ -166,7 +162,6 @@ def main():
 
     _VERBS = ('GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'OPTIONS',
               'get', 'post', 'delete', 'put', 'head', 'options')
-    _DATA_VERBS = ('POST', 'PUT', 'post', 'put')
 
     parser = argparse.ArgumentParser(
         description='Simple Benchmark.')
@@ -181,10 +176,6 @@ def main():
     parser.add_argument('-s', '--timeout', metavar='',
                         help=('Timeout for each response '
                               'Default is 30 seconds'), type=str)
-
-    parser.add_argument('-D', '--data', metavar='',
-                        help=('Data. Prefixed by "py:" to point '
-                              'a python callable.'), type=str)
 
     parser.add_argument('-n', '--requests', metavar='',
                         help='Number of requests', type=int)
@@ -220,15 +211,11 @@ def main():
     else:
         TEST_URL = args.url
 
-    if args.data is None:
-        MY_DATA = {}
-    if args.data is not None and args.method not in _DATA_VERBS:
+    if args.method not in _VERBS:
         print("You can't provide data with %r" % args.method)
         parser.print_usage()
         sys.exit(0)
     else:
-        if args.data is not None:
-            MY_DATA = dict([_split(data) for data in args.data])
         MY_MEHTOD = args.method
 
     if args.requests is None:
@@ -264,16 +251,15 @@ def main():
     print('Request Method: \t\t %s' % MY_MEHTOD.upper())
     if MY_HEADERS != {}:
         print('Request Headers: \t\t %s' % MY_HEADERS)
-    if MY_DATA != {}:
-        print('Request Headers: \t\t %s' % MY_DATA)
     print('Concurrency Level: \t\t %s' % CONCURRENCY_NUM)
     print('Complete requests: \t\t %s' % SUCCESS_NUM)
     print('Failed requests: \t\t %s' % FAIL_NUM)
+    print('Total transferred: \t\t %.3f KB' % (float(FILE_SIZE) / 1024))
     print('Transfer Rate: \t\t\t %.3f [KB/sec] received' %
-          (FILE_SIZE / 1024 / SpendTime))
+          (float(FILE_SIZE) / 1024 / SpendTime))
     print('Time per request: \t\t %.3f [s](mean)' %
           (CONCURRENCY_NUM * SpendTime/REQUEST_NUM))
-    print('Time per request: \t\t %.3f [s](mean, across all'
+    print('Time per request: \t\t %.3f [s](mean, across all '
           'concurrent requests)' % (SpendTime / REQUEST_NUM))
     print('Requests per second: \t\t %.3f' % (REQUEST_NUM / SpendTime))
     print('\n')
