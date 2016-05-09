@@ -5,15 +5,14 @@ You can take it as a simplified version of the AB(Apache Benchmark)
 
 ## Basic Usage
 ```
-$ python ./test.py -n 100 -c 10 -m POST http://stackoverflow.com/
+ $ python ./test.py -n 100 -c 10 -s 10 -m post http://www.gamersky.com/
 ```
-
 ```
-Test starts at: Mon May 09 13:14:34 2016
+Test starts at: Mon May 09 16:26:38 2016
 Running 100 requests
 
-Host Name: http://stackoverflow.com
-Server Software: cloudflare-nginx
+Host Name: http://www.gamersky.com/
+Server Software: Microsoft-IIS/7.5
 Status Code: 200
 Server Port: 80
 [=================================================================>] 100%
@@ -21,19 +20,21 @@ Server Port: 80
 --------------------Results--------------------
 Request Method:                  POST
 Concurrency Level:               10
-Complete requests:               0
-Failed requests:                 100
-Transfer Rate:                   0.000 [KB/sec] received
-Time per request:                0.838 [s](mean)
-Time per request:                0.084 [s](mean, across allconcurrent requests)
-Requests per second:             11.926
+Complete requests:               100
+Failed requests:                 0
+Total transferred:               41791.699 KB
+Transfer Rate:                   3817.988 [KB/sec] received
+Time per request:                1.095 [s](mean)
+Time per request:                0.109 [s](mean, across all concurrent requests)
+Requests per second:             9.136
 
 
-Spend Time:                      8.385 [s]
+Spend Time:                      10.946 [s]
 ```
+
 #### Options
 ```
-python ./test.py -h
+$ python ./test.py -h
 ```
 
 ```
