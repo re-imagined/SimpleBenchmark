@@ -22,7 +22,6 @@ Running 100 requests
 
 --------------------Results--------------------
 Request Method:                  POST
-Request Headers:                 {'Connection': 'keep-alive'}
 Concurrency Level:               10
 Complete requests:               100
 Failed requests:                 0
