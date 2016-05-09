@@ -2,6 +2,8 @@
 A simple command line tool based on **Python** for benchmarking your Protocol (HTTP) server,
 which supports multiple threads and simulate the HTTP requests and responses of the Web pages under test.
 You can take it as a simplified version of the AB(Apache Benchmark)
+
+## Basic Usage
 > $ python ./test.py -n 100 -c 10 http://stackoverflow.com/
 
 ```
