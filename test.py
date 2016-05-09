@@ -48,7 +48,7 @@ class MyThread(threading.Thread):
         apply(self.func, self.args)
 
 
-def request_URL(url):
+def request_URL(url, concurrency):
     global CONCURRENCY_NUM
     global TIME_OUT
     global TEST_URL
@@ -60,7 +60,7 @@ def request_URL(url):
     global MY_DATA
     global METHOD
 
-    for _ in xrange(CONCURRENCY_NUM):
+    for _ in xrange(concurrency):
         try:
             req = urllib2.Request(url, headers=MY_HEADERS)
             response = urllib2.urlopen(req, timeout=TIME_OUT)
@@ -101,9 +101,12 @@ def test_start():
         if i < loop_num - 1:
             concurrency = CONCURRENCY_NUM
         else:
-            concurrency = REQUEST_NUM % CONCURRENCY_NUM
+            if REQUEST_NUM % CONCURRENCY_NUM == 0:
+                concurrency = CONCURRENCY_NUM
+            else:
+                concurrency = REQUEST_NUM % CONCURRENCY_NUM
         t = MyThread(
-            request_URL, (TEST_URL,), request_URL.__name__)
+            request_URL, (TEST_URL, concurrency), request_URL.__name__)
         threads.append(t)
 
     p = pb.AnimatedProgressBar(end=100, width=65)
