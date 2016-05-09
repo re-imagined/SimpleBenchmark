@@ -64,7 +64,7 @@ def request_URL(url, concurrency):
             # print(e.reason)
             FAIL_NUM += 1
         except urllib2.URLError as e:
-            print(e.reason)
+            # print(e.reason)
             FAIL_NUM += 1
         FINISHED_NUM += 1
 
