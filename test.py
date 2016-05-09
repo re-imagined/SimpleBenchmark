@@ -4,6 +4,7 @@ import pb
 import sys
 import time
 import math
+import urllib
 import urllib2
 import argparse
 import requests
@@ -24,9 +25,10 @@ FINISHED_NUM = 0  # 完成数
 FAIL_NUM = 0  # 出错数
 SUCCESS_NUM = 0  # 成功请求数
 FILE_SIZE = 0
-MY_DATA = None
-MY_MEHTOD = 'GET'
-
+MY_MEHTOD = 'GET'  # 默认使用 GET 方法
+# 下面的 DATA 和 HEADERS 仅为例子，不是默认值
+MY_DATA = {'email': 'myemail', 'password': 'mypass', 'autologin': '1',
+           'submit': 'submit', 'type': ''}
 MY_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit\
             /537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
@@ -63,12 +65,13 @@ def request_URL(url):
     for _ in xrange(CONCURRENCY_NUM):
         try:
             req = urllib2.Request(url, headers=MY_HEADERS)
-            response = urllib2.urlopen(req, timeout=TIME_OUT, data=MY_DATA)
+            response = urllib2.urlopen(req, timeout=TIME_OUT,
+                                       data=urllib.urlencode(MY_DATA))
             html = response.read()
             SUCCESS_NUM += 1
             FILE_SIZE += len(html)
         except urllib2.HTTPError as e:
-            print(e.reason)
+            # print(e.reason)
             FAIL_NUM += 1
         except urllib2.URLError as e:
             print(e.reason)
@@ -172,42 +175,39 @@ def main():
         '-v', '--version', action='store_true', default=False,
         help='Displays version and exits.')
 
-    parser.add_argument('-m', '--method', help='HTTP Method',
+    parser.add_argument('-m', '--method', help='HTTP Method', metavar='',
                         type=str, default='GET', choices=_VERBS)
 
-    parser.add_argument('--content-type', help='Content-Type',
-                        type=str, default='text/plain')
-
-    parser.add_argument('-s', '--timeout',
-                        help=('Seconds to max. wait for each response'
+    parser.add_argument('-s', '--timeout', metavar='',
+                        help=('Timeout for each response '
                               'Default is 30 seconds'), type=str)
 
-    parser.add_argument('-D', '--data',
+    parser.add_argument('-D', '--data', metavar='',
                         help=('Data. Prefixed by "py:" to point '
                               'a python callable.'), type=str)
 
-    parser.add_argument('-n', '--requests',
+    parser.add_argument('-n', '--requests', metavar='',
                         help='Number of requests', type=int)
 
-    parser.add_argument('-c', '--concurrency', help='Concurrency',
+    parser.add_argument('-c', '--concurrency', help='Concurrency', metavar='',
                         type=int, default=1)
 
     parser.add_argument('-H', '--header', help=' Add Arbitrary header line,'
                         ' eg. "Accept-Encoding: gzip"'
                         'Inserted after all normal header lines. (repeatable)',
-                        type=str, action='append')
+                        type=str, action='append', metavar='')
 
     parser.add_argument('url', help='URL to benchmark', nargs='?')
     args = parser.parse_args()
 
-    def _split(header):
-        # split the header
-        header = header.split(':')
-        if len(header) != 2:
-            print("A header must be of the form name:value")
+    def _split(header_or_data):
+        # split the header or data
+        header_or_data = header_or_data.split(':')
+        if len(header_or_data) != 2:
+            print("A header or data must be of the form name:value")
             parser.print_usage()
             sys.exit(0)
-        return header
+        return header_or_data
 
     if args.version:
         print('v0.1')
@@ -220,12 +220,15 @@ def main():
     else:
         TEST_URL = args.url
 
+    if args.data is None:
+        MY_DATA = {}
     if args.data is not None and args.method not in _DATA_VERBS:
         print("You can't provide data with %r" % args.method)
         parser.print_usage()
         sys.exit(0)
     else:
-        MY_DATA = args.data
+        if args.data is not None:
+            MY_DATA = dict([_split(data) for data in args.data])
         MY_MEHTOD = args.method
 
     if args.requests is None:
@@ -261,8 +264,10 @@ def main():
     print('Request Method: \t\t %s' % MY_MEHTOD.upper())
     if MY_HEADERS != {}:
         print('Request Headers: \t\t %s' % MY_HEADERS)
-    print('Complete requests: \t\t %s' % SUCCESS_NUM)
+    if MY_DATA != {}:
+        print('Request Headers: \t\t %s' % MY_DATA)
     print('Concurrency Level: \t\t %s' % CONCURRENCY_NUM)
+    print('Complete requests: \t\t %s' % SUCCESS_NUM)
     print('Failed requests: \t\t %s' % FAIL_NUM)
     print('Transfer Rate: \t\t\t %.3f [KB/sec] received' %
           (FILE_SIZE / 1024 / SpendTime))
@@ -270,7 +275,6 @@ def main():
           (CONCURRENCY_NUM * SpendTime/REQUEST_NUM))
     print('Time per request: \t\t %.3f [s](mean, across all'
           'concurrent requests)' % (SpendTime / REQUEST_NUM))
-
     print('Requests per second: \t\t %.3f' % (REQUEST_NUM / SpendTime))
     print('\n')
     print('Spend Time: \t\t\t %.3f [s]' % (SpendTime))
