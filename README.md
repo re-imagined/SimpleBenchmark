@@ -50,10 +50,9 @@ optional arguments:
   -v, --version        Displays version and exits.
   -m , --method        HTTP Method
   -s , --timeout       Timeout for each response Default is 30 seconds
-  -D , --data          Data. Prefixed by "py:" to point a python callable.
-  -n , --requests      Number of requests
-  -c , --concurrency   Concurrency
-  -H , --header        Add Arbitrary header line, eg. "Accept-Encoding:
-                       gzip"Inserted after all normal header lines.
-                       (repeatable)
+  -k, --keep-alive     Use HTTP KeepAlive feature
+  -n , --requests      Number of requests. Default is 1
+  -c , --concurrency   Number of concurrency. Default is 1
+  -H , --header        Add Arbitrary header line, eg. "Accept-Encoding: gzip"
+                       Inserted after all normal header lines. (repeatable)
 ```
