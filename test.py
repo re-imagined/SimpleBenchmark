@@ -12,6 +12,7 @@ import threading
 from Queue import Queue
 from time import sleep, ctime
 from requests.packages.urllib3.util import parse_url
+from requests.packages.urllib3.connectionpool import HTTPConnectionPool
 try:
     import urlparse
 except ImportError:
@@ -124,8 +125,22 @@ def test_start():
 
 def get_server_info(method='GET'):
     global TEST_URL
+
+    def _make_request(self, conn, method, url, **kwargs):
+        response = self._old_make_request(conn, method, url, **kwargs)
+        sock = getattr(conn, 'sock', False)
+        if sock:
+            setattr(response, 'peer', sock.getpeername())
+        else:
+            setattr(response, 'peer', None)
+        return response
+
+    HTTPConnectionPool._old_make_request = HTTPConnectionPool._make_request
+    HTTPConnectionPool._make_request = _make_request
+
     try:
         res = requests.get(TEST_URL)
+        print('Server IP: %s' % res.raw._original_response.peer[0])
         parts = parse_url(TEST_URL)
         if not parts.port and parts.scheme == 'https':
             port = 443
@@ -233,6 +248,7 @@ def main():
     print('Test starts at: %s' % (ctime()))
     print('Running %s requests\n' % (REQUEST_NUM))
     print('Host Name: %s' % (TEST_URL))
+
     StartTime = time.time()
     get_server_info()
     try:
