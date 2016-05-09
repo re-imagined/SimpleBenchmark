@@ -18,7 +18,7 @@ try:
 except ImportError:
     from urllib import parse as urlparse
 
-TEST_URL = 'https://www.baidu.com'
+TEST_URL = 'https://www.zhihu.com'
 TIME_OUT = 30
 REQUEST_NUM = 1  # 总请求次数
 CONCURRENCY_NUM = 1  # 一次并发请求的次数，总的请求数(n)=次数*一次并发请求数(c)
@@ -27,15 +27,7 @@ FAIL_NUM = 0  # 出错数
 SUCCESS_NUM = 0  # 成功请求数
 FILE_SIZE = 0
 MY_MEHTOD = 'GET'  # 默认使用 GET 方法
-
-MY_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit\
-            /537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,\
-            */*;q=0.8',
-    'Accept-Encoding': 'gzip',
-    'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4'
-}
+MY_HEADERS = {}
 
 
 class MyThread(threading.Thread):
@@ -189,14 +181,17 @@ def main():
                         help=('Timeout for each response '
                               'Default is 30 seconds'), type=str)
 
-    parser.add_argument('-n', '--requests', metavar='',
-                        help='Number of requests', type=int)
+    parser.add_argument('-k', '--keep-alive', action="store_true",
+                        default=False, help='Use HTTP KeepAlive feature')
 
-    parser.add_argument('-c', '--concurrency', help='Concurrency', metavar='',
-                        type=int, default=1)
+    parser.add_argument('-n', '--requests', metavar='',
+                        help='Number of requests. Default is 1', type=int)
+
+    parser.add_argument('-c', '--concurrency', help='Number of concurrency.'
+                        ' Default is 1', metavar='', type=int, default=1)
 
     parser.add_argument('-H', '--header', help=' Add Arbitrary header line,'
-                        ' eg. "Accept-Encoding: gzip"'
+                        ' eg. "Accept-Encoding: gzip" '
                         'Inserted after all normal header lines. (repeatable)',
                         type=str, action='append', metavar='')
 
@@ -245,12 +240,22 @@ def main():
     else:
         MY_HEADERS = dict([_split(header) for header in args.header])
 
+    if args.keep_alive is True:
+        MY_HEADERS['Connection'] = 'keep-alive'
+    else:
+        MY_HEADERS['Connection'] = 'close'
+
+    print('')
     print('Test starts at: %s' % (ctime()))
-    print('Running %s requests\n' % (REQUEST_NUM))
+    print('')
     print('Host Name: %s' % (TEST_URL))
 
     StartTime = time.time()
     get_server_info()
+
+    print('')
+    print('Running %s requests\n' % (REQUEST_NUM))
+
     try:
         test_start()
     except KeyboardInterrupt:
@@ -259,6 +264,7 @@ def main():
     finally:
         EndTime = time.time()
         SpendTime = EndTime - StartTime
+
     print('\n')
     print('--------------------Results--------------------')
     print('Request Method: \t\t %s' % MY_MEHTOD.upper())
@@ -275,7 +281,7 @@ def main():
     print('Time per request: \t\t %.3f [s](mean, across all '
           'concurrent requests)' % (SpendTime / REQUEST_NUM))
     print('Requests per second: \t\t %.3f' % (REQUEST_NUM / SpendTime))
-    print('\n')
+    print('')
     print('Spend Time: \t\t\t %.3f [s]' % (SpendTime))
 
 if __name__ == "__main__":
