@@ -29,3 +29,26 @@ Requests per second:             11.926
 
 Spend Time:                      8.385 [s]
 ```
+#### Options
+> python ./test.py -h
+
+```
+usage: [options] [http[s]://]hostname[:port]/path
+
+Simple Benchmark.
+
+positional arguments:
+  url                  URL to benchmark
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -v, --version        Displays version and exits.
+  -m , --method        HTTP Method
+  -s , --timeout       Timeout for each response Default is 30 seconds
+  -D , --data          Data. Prefixed by "py:" to point a python callable.
+  -n , --requests      Number of requests
+  -c , --concurrency   Concurrency
+  -H , --header        Add Arbitrary header line, eg. "Accept-Encoding:
+                       gzip"Inserted after all normal header lines.
+                       (repeatable)
+```
