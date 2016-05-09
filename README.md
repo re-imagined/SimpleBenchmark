@@ -5,16 +5,16 @@ You can take it as a simplified version of the AB(Apache Benchmark)
 
 ## Basic Usage
 ```
- $ python ./test.py -n 100 -c 10 -s 10 -m post http://www.gamersky.com/
+ $ python ./test.py -n 100 -c 10 -s 10 -m post https://www.youtube.com/
 ```
 ```
-Test starts at: Mon May 09 16:26:38 2016
+Test starts at: Mon May 09 16:37:39 2016
 Running 100 requests
 
-Host Name: http://www.gamersky.com/
-Server Software: Microsoft-IIS/7.5
+Host Name: https://www.youtube.com
+Server Software: Ytfe_Worker
 Status Code: 200
-Server Port: 80
+Server Port: 443
 [=================================================================>] 100%
 
 --------------------Results--------------------
@@ -22,14 +22,14 @@ Request Method:                  POST
 Concurrency Level:               10
 Complete requests:               100
 Failed requests:                 0
-Total transferred:               41791.699 KB
-Transfer Rate:                   3817.988 [KB/sec] received
-Time per request:                1.095 [s](mean)
-Time per request:                0.109 [s](mean, across all concurrent requests)
-Requests per second:             9.136
+Total transferred:               39750.634 KB
+Transfer Rate:                   1171.652 [KB/sec] received
+Time per request:                3.393 [s](mean)
+Time per request:                0.339 [s](mean, across all concurrent requests)
+Requests per second:             2.948
 
 
-Spend Time:                      10.946 [s]
+Spend Time:                      33.927 [s]
 ```
 
 #### Options
