@@ -5,7 +5,7 @@ You can take it as a simplified version of the AB(Apache Benchmark)
 
 ## Basic Usage
 ```
- $ python ./test.py -n 100 -c 10 -s 10 -m post https://www.youtube.com/
+ $ python ./benchmark.py -n 100 -c 10 -s 10 -m post https://www.youtube.com/
 ```
 ```
 Test starts at: Mon May 09 20:15:01 2016
